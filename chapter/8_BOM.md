@@ -70,3 +70,34 @@ console.log(window.c);  // undefined
 至于其原理及更详细内容，可查看文章[《js中的内部属性与delete操作符》](http://log.fyscu.com/index.php/archives/303/)。
 
 ### 8.1.2 窗口关系及框架
+
+如果页面包含框架，则每个框架都拥有自己的 window 对象，并且保存着 frames 集合中。
+
+### 8.1.3 窗口位置
+
+IE,Safari,Chrome, Opera/Firefox:
+
++ screenLeft/screenX 窗口相对于屏幕左边的位置
++ screenTop/screenY 窗口相对于屏幕上边的位置
+
+```
+// 跨浏览器获取窗口左边和上边位置
+var leftPos = (typeof window.screenLeft == 'number') ?
+                window.screenLeft : window.screenX;
+var leftPos = (typeof window.screenTop == 'number') ?
+                window.screenTop : window.screenY;    
+```
+
+```
+// 将窗口移到屏幕最左上角
+window.moveTo(0, 0);
+
+// 将窗口向下移动100像素
+window.moveBy(0, 100);
+
+// 将窗口移到(200, 300)
+window.moveTo(200, 300);
+
+// 将窗口向左移动50像素
+window.moveBy(-50, 0);
+```
