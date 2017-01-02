@@ -101,3 +101,54 @@ window.moveTo(200, 300);
 // 将窗口向左移动50像素
 window.moveBy(-50, 0);
 ```
+
+#### 8.1.4 窗口大小
+
+> TODO 这里书上感觉写得也不清楚。待完善。
+
+不同浏览器确定窗口大小的属性很不一样。
+
+IE9+/Firefox/Safari/Chrome/Opera 均定义了四个属性 `innerWidth/innerHeight/outerWidth/outerHeight`。
+
++ IE9+／Safari/Firefox 中，outerWidth/outerHeight 返回浏览器窗口的本身尺寸（无论是从最外层的window对象还是某个框架访问）
++ Opera 中，outerWidth/outerHeight 返回页面视图容器的大小（单个标签页对应的浏览器窗口）
+
+#### 8.1.5  导航和打开窗口
+
+**1. 弹出窗口**
+
+[MDN: window.open](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/open)
+
+`window.open(strUrl, strWindowName, [strWindowFeatures]);`：
+
++ `strUrl` 新窗口需要载入的url地址。strUrl可以是web上的html页面也可以是图片文件或者其他任何浏览器支持的文件格式。
++ `strWindowName` 新窗口的名称。该字符串可以用来作为超链接 <a> 或表单 <form> 元素的目标属性值。字符串中不能含有空白字符。注意：strWindowName 并不是新窗口的标题。
++ `strWindowFeatures` 可选参数。是一个字符串值，这个值列出了将要打开的窗口的一些特性(窗口功能和工具栏) 。 字符串中不能包含任何空白字符，特性之间用逗号分隔开。
+
+|设置|值|说明|
+|:--:|:--:|:--:|
+|fullscreen|yes/no|浏览器窗口是否最大化。仅限IE|
+|height|number|新窗口的高度。不能小于100|
+|left|number|新窗口的左坐标。不能是负值|
+|location|yes/no|浏览器窗口是否显示地址栏。不同浏览器的默认值不同。如果设置为no，地址栏可能会隐藏，也可能会被禁用|
+|menubar|yes/no|是否在浏览器中显示菜单栏。默认为no|
+|resizable|yes/no|是否可以通过拖动浏览器窗口的边框改变其大小。默认为no|
+|scrollbars|yes/no|内容在视口中显示不下，是否运行滚动。默认为no|
+|status|yes/no|是否在浏览器窗口中显示状态栏。默认为no|
+|toolbar|yes/no|是否在浏览器窗口中显示工具栏。默认为no|
+|top|number|新窗口的上坐标。不能是负值|
+|top|number|新窗口的宽度。不能小于100|
+
+```
+var windowObjectReference = window.open('http://nodejh.com', 'height=400,width=400,top=100,left=0,resizable=yes');
+// 调整大小
+windowObjectReference.resizeTo(500, 500);
+// 移动位置
+windowObjectReference.moveTo(100, 100);
+// 关闭窗口
+windowObjectReference.close();
+
+console.log(windowObjectReference.opener == window); // true
+```
+
+**2. 安全限制**
