@@ -102,7 +102,7 @@ window.moveTo(200, 300);
 window.moveBy(-50, 0);
 ```
 
-#### 8.1.4 窗口大小
+### 8.1.4 窗口大小
 
 > TODO 这里书上感觉写得也不清楚。待完善。
 
@@ -152,3 +152,139 @@ console.log(windowObjectReference.opener == window); // true
 ```
 
 **2. 安全限制**
+
+为了避免弹出窗口的恶意利用，有些浏览器在弹出窗口方面增加了限制。
+
+**3. 弹出窗口屏蔽程序**
+
+大多数浏览器都内置有弹出窗口屏蔽程序。
+
+```
+var blocked = false;
+try {
+  var wroxWin = window.open('http://www.rox.com', '_blank');
+  if (wroxWin == null) {
+    blocked = true;
+  }
+} catch (ex) {
+  blocked = true;
+}
+
+if (blocked) {
+  alert('The popup was blocked!');
+}
+```
+
+### 8.1.6 间歇调用和超时调用
+
+JavaScript 是单线程语言，但它可以在特定时刻执行执行代码。
+
+**超时调用**
+
+```
+// 不建议传递字符串
+// 性能不好
+setTimeout('alert("Hello World")', 1000);
+
+// 推荐的调用方式
+var timeoutId = setTimeout(function() {
+  alert('Hello World!');
+}, 1000);
+
+// 不是在 1000ms 执行代码
+// 而是在等待 1000ms 将任务添加到队列中
+// 如果队列为空
+//     代码立即执行
+// 如果队列不为空
+//     代码在前面的队列任务完成后执行
+
+// 取消尚未执行的超时调用
+clearTimeout(timeoutId);
+```
+
+超时调用的代码是在全局作用域中执行的，因此函数中的 `this` ：
+
++ 在非严格模式下指向 `window` 对象
++ 在严格模式下指向 `undefined`
+
+**间歇调用**
+
+```
+// 不建议传递字符串
+// 性能不好
+setInterval('alert("Hello World")', 1000);
+
+// 推荐的调用方式
+var intervalId = setInterval(function() {
+  alert('Hello World!');
+}, 1000);
+
+// 取消间歇调用
+clearInterval(intervalId);
+```
+
+**实例**
+
+实现变量 num 每秒递增一次，当达到最大值时取消递增。
+
+```
+// 方法一
+var num = 0;
+var max = 10;
+
+function incrementNumber() {
+  num++;
+
+  if (num == max) {
+    clearInterval(intervalId);
+    alert('Done');
+  }
+}
+
+var intervalId = setInterval(incrementNumber, 1000);
+```
+
+```
+// 方法二
+var num = 0;
+var max = 10;
+
+function incrementNumber() {
+  num++;
+
+  if (num < 10) {
+    setTimeout(incrementNumber, 1000);
+  } else {
+    alert('Done');
+  }
+}
+
+setTimeout(incrementNumber, 1000);
+```
+
+可见，使用超时调用的时候，不需要跟踪超时 ID。所以使用超时调用模拟间歇调用是一种最佳模式。
+
+### 8.1.7 系统对话框
+
+
+|函数|返回值|
+|:--:|:--:|
+|alert('Info')|没有返回值|
+|confirm('Info')|点击“确定”返回 true；点击取消返回 false|
+|prompt('Info')|点击“确定”返回 ''/输入的字符串；点击取消返回 null|
+|prompt('Info', 'default')|点击“确定”返回 ''/输入的字符串；点击取消返回 default|
+
+`alert()` `confirm()` `prompt()` 都是同步和模态的，会中止代码的执行。
+
+```
+// 显示打印对话框
+window.print();
+
+// “查找”
+//    找到返回 true；未找到返回 false
+window.find('string');
+```
+
+> 书上写 window.find(); 显示查找对话框，但通过实践并不是这样。
+> Chrome 55/Safari 10 是查找给定的字符串。
+> Firefox 是显示“查找对话框”
