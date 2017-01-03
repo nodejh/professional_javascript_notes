@@ -288,3 +288,18 @@ window.find('string');
 > 书上写 window.find(); 显示查找对话框，但通过实践并不是这样。
 > Chrome 55/Safari 10 是查找给定的字符串。
 > Firefox 是显示“查找对话框”
+
+## 8.2 location 对象
+
+location 既是 window 对象的属性，也是 document 对象的属性；换句话说，window.location 和 document.location 引用的是同一个对象。
+
+|属性名|例子|说明|
+|:---:|:---:|:---:|
+|hash|#contents|返回URL中的hash。如果URL不包含散列值，则返回''|
+|host|www.wrox.com:80|返回服务器名称和端口号（如果有）|
+|hostname|www.wrox.com|返回不带端口号的服务器名称|
+|href|http://www.wrox.com/WileyCDA|返回当前页面的完整URL|
+|pathname|/WileyCDA|返回URL中的文件或目录名|
+|port|8080|返回URL中的端口。如果不包含端口则返回''|
+|protocol|https:|返回使用的协议|
+|search|?q=javascript|返回URL的查询字符串。以问号开头|
