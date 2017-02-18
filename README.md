@@ -9,7 +9,9 @@
 ## ISSUE
 
 
-### P72
+### P72 [已解决]
+
+主要是 JS 传递参数的方式
 
 ```
 function setName(obj) {
@@ -24,3 +26,15 @@ alert(person.name); // nodejh
 ```
 
 为什么是 nodejh？
+
+```
+function addTen(num) {
+  num += 10;
+  return num;
+}
+
+var count = 20;
+var result = addTen(count);
+alert(count); // 20, 没有变化
+alert(result); // 30
+```
