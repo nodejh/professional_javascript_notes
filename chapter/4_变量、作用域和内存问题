@@ -1,5 +1,24 @@
 # 第四章 变量、作用域和内存问题
 
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [第四章 变量、作用域和内存问题](#第四章-变量作用域和内存问题)
+	- [4.1 基本类型和引用类型](#41-基本类型和引用类型)
+		- [4.1.1 动态的属性](#411-动态的属性)
+		- [4.1.2 复制变量值](#412-复制变量值)
+		- [4.1.3 传递参数](#413-传递参数)
+			- [4.1.4 检测类型](#414-检测类型)
+	- [4.2 执行环境及作用域](#42-执行环境及作用域)
+			- [4.2.1 延长作用域链](#421-延长作用域链)
+			- [4.2.2 没有块级作用域](#422-没有块级作用域)
+	- [4.3 垃圾收集 TODO](#43-垃圾收集-todo)
+			- [4.3.1 标记清除](#431-标记清除)
+			- [4.3.2 引用计数](#432-引用计数)
+			- [4.3.3 性能问题](#433-性能问题)
+			- [4.3.4 管理内存](#434-管理内存)
+
+<!-- /TOC -->
+
 ## 4.1 基本类型和引用类型
 
 ESMAScript 变量包含两种不同类型的值：
@@ -88,6 +107,8 @@ alert(obj2.name); // nodejh
 
 ### 4.1.3 传递参数
 
+[JavaScript 是传值调用还是传引用调用？](http://nodejh.com/post/Is-JavaScript-a-pass-by-reference-or-pass-by-value-language/)
+
 ECMAScript 中所有函数的参数都是按值传递的。
 
 + 传递基本类型的参数，被传递的值复制给 arguments 对象的一个元素。
@@ -126,3 +147,108 @@ var person = new Object();
 setName(person);
 alert(person.name); // nodejh
 ```
+
+#### 4.1.4 检测类型
+
+`typeof` 可以用来检测基本类型。
+
+```
+var s = 'nodejh';
+var b = true;
+var i = 22;
+var u;
+var n = null;
+var o = new Object();
+
+typeof s; //  string
+typeof b; // boolean
+typeof i; // number
+typeof u; // undefined
+typeof n; // null
+typeof o; // new Object();
+```
+
+> typeof null 的结果是 object
+> typeof 正则表达式也是 object
+> typeof 函数是 function
+
+
+## 4.2 执行环境及作用域
+
+#### 4.2.1 延长作用域链
+
+有些办法可以延长作用域链，即在作用域前端临时添加一个变量；变量在代码执行后被移除。
+
+**try-catch 的 catch 语句**
+
+创建一个新的对象变量，其中包含的是被抛出的错误对象的声明。
+
+**with**
+
+`with` 将指定对象添加到作用域链中。
+
+```
+function bindUrl(){
+    var qs = '?debug=true';
+    with(location) {
+        // 将 location 对象的所有属性添加在当前作用域链的前端
+        // 在当前作用域就可以直接使用 location 的属性
+        // 如 host, href, pathname
+        console.log('href: ', href);
+        var url = href + qs;
+    }
+    return url;
+}
+console.log(bindUrl());
+```
+
+// TODO with 的性能存在问题
+
+[with](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/with)
+[Javascript中的with关键字](http://luopq.com/2016/02/14/js-with-keyword/)
+
+#### 4.2.2 没有块级作用域
+
+在以前 JS 没有块级作用域。但 ES6 新增了 `let` 语句可以用来声明一个块级作用域的本地变量。
+
+```
+if (true) {
+    var color = 'red';
+    let anotherColor=  'bule';
+}
+
+console.log(color); // color
+console.log(anotherColor); // ReferenceError: s is not defined
+```
+
+## 4.3 垃圾收集 TODO
+
+JavaScript 有自动垃圾收集机制。
+
++ [【译文】Node.js垃圾回收机制-基础](https://segmentfault.com/a/1190000007714028)
++ [内存管理](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Memory_Management)
++ [http://huang-jerryc.com/2016/04/14/NodeJS中被忽略的内存/](http://huang-jerryc.com/2016/04/14/NodeJS中被忽略的内存/)
++ [[译]编写高性能对垃圾收集友好的代码](https://segmentfault.com/a/1190000007887891)
++ [[JavaScript 随笔] 垃圾回收](https://segmentfault.com/a/1190000003641343)
++ [【前端进阶之路】内存基本知识](https://segmentfault.com/a/1190000006104910)
++ [4种JavaScript内存泄漏浅析及如何用谷歌工具查内存泄露]()
+
+#### 4.3.1 标记清除
+
+
+#### 4.3.2 引用计数
+
+
+#### 4.3.3 性能问题
+
+垃圾收集器周期运行，如果为变量分配的内数量很多，那么回收工作量也非常大。这种情况下确定垃圾收集器的时间间隔是一个非常重要的问题。
+
+#### 4.3.4 管理内存
+
+**解除引用**
+
+一旦数据不有用，就将其值设置为 null 来释放其引用。为执行中的代码只保存必要的数据。
+
+局部变量会在离开执行环境的时候自动解除引用。
+
+解除引用并不意味这自动回收该值所占的内存，而是让其脱离执行环境，以便垃圾收集器下次运行时将其回收。
